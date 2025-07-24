@@ -1,0 +1,20 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <button class="bag" onclick=" count++; document.querySelector('.bag').innerText ='you bag has'+ count +'items'"> add to bag</button>
+    <button class="wish" onclick="alert('item has been added to the watchlist');">wishlist</button>
+    
+    <script>
+        let count = 0;
+        document.querySelector('.bag').innerText ='you bag has'+ count +'items';
+    </script>
+</body>
+
+</html>
