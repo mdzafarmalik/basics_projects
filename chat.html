@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AI Chat Assistant</title>
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet"/>
+  <style>
+    body.dark-mode {
+      background-color: #343a40;
+      color: #f8f9fa;
+    }
+    .chat-box {
+      height: 70vh;
+      overflow-y: auto;
+      border: 1px solid #ddd;
+      padding: 10px;
+      background: #fff;
+    }
+    body.dark-mode .chat-box {
+      background: #495057;
+      border-color: #6c757d;
+    }
+    .fade-in {
+      animation: fadeIn 0.3s ease-out forwards;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .typing-indicator span {
+      animation: blink 1.4s infinite both;
+    }
+    @keyframes blink {
+      0% { opacity: 0.2; }
+      20% { opacity: 1; }
+      100% { opacity: 0.2; }
+    }
+  </style>
+</head>
+<body class="bg-light">
+
+<div class="container py-3">
+  <div class="d-flex justify-content-between align-items-center mb-2">
+    <h3>🤖 AI Chat Assistant</h3>
+    <button class="btn btn-sm btn-outline-secondary" id="themeToggle">Toggle Dark Mode</button>
+  </div>
+
+  <div class="chat-box mb-3" id="chatBox">
+    <div class="text-muted small">AI: Hello! I’m ready to assist you. 🌟</div>
+  </div>
+
+  <form id="chatForm" class="d-flex">
+    <input type="text" id="chatInput" class="form-control mr-2" placeholder="Type your message..." autocomplete="off"/>
+    <button type="submit" class="btn btn-primary">Send</button>
+  </form>
+</div>
+
+<script>
+  const chatBox = document.getElementById('chatBox');
+  const chatForm = document.getElementById('chatForm');
+  const chatInput = document.getElementById('chatInput');
+  const themeToggle = document.getElementById('themeToggle');
+
+  // Theme toggle
+  themeToggle.addEventListener('click', () => {
+    document.body.classList.toggle('dark-mode');
+  });
+
+  // WebSocket connection
+  const socket = new WebSocket('ws://localhost:8080'); // Replace with your server
+
+  socket.onopen = () => console.log('Connected to server');
+
+  socket.onmessage = (e) => {
+    addMessage('AI', e.data, false);
+  };
+
+  chatForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const msg = chatInput.value.trim();
+    if (msg === '') return;
+
+    addMessage('You', msg, true);
+    socket.send(msg);
+    chatInput.value = '';
+  });
+
+  function addMessage(sender, text, isUser) {
+    const msgDiv = document.createElement('div');
+    msgDiv.className = `fade-in mb-2 ${isUser ? 'text-right' : 'text-left'}`;
+    msgDiv.innerHTML = `<strong>${sender}:</strong> ${text}`;
+    chatBox.appendChild(msgDiv);
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }
+</script>
+
+</body>
+</html>
